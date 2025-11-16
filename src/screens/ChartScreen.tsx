@@ -7,7 +7,12 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { Canvas } from "@shopify/react-native-skia";
+import {
+  Canvas,
+  Rect,
+  TwoPointConicalGradient,
+  vec,
+} from "@shopify/react-native-skia";
 import TrendLine from "../components/TrendLine";
 import AnimatedLineCoordinates from "../components/AnimatedLineCoordinates";
 import AnimatedDotsCoordinates from "../components/AnimatedDotsCoordinates";
@@ -39,7 +44,7 @@ const ChartScreen = () => {
 
   const firstLineDots = [
     { x: 55, y: 150 },
-    { x: 270, y: 73 },
+    { x: 270, y: 75 },
   ];
 
   const secondLineCoordinates = [
@@ -57,10 +62,25 @@ const ChartScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
       <LinearGradient
         colors={["#000", "#333"]}
-        style={styles.container}
+        style={styles.screenGradient}
         start={{ x: 0.5, y: 0.1 }}
         end={{ x: 0.5, y: 0.85 }}
+        locations={[0.7, 1]}
       >
+        <View style={styles.gradientContainer}>
+          <Canvas style={{ flex: 1 }}>
+            <Rect x={0} y={0} width={400} height={350}>
+              <TwoPointConicalGradient
+                colors={["transparent", "#00ff0096"]}
+                start={vec(320, 180)}
+                startR={310}
+                end={vec(320, 185)}
+                endR={1}
+                positions={[0.1, 1]}
+              />
+            </Rect>
+          </Canvas>
+        </View>
         <View style={styles.container}>
           <View style={styles.studyFactTextContainer}>
             <Octicons
@@ -106,49 +126,41 @@ const ChartScreen = () => {
               />
               <Text style={styles.nowText}>{"Now"}</Text>
             </View>
-            <LinearGradient
-              colors={["#000", "#00ff004f"]}
-              style={styles.gradient}
-              start={{ x: 0.5, y: 0.45 }}
-              end={{ x: 1, y: 0 }}
-              locations={[0.3, 1]}
-            >
-              <Canvas style={styles.canvas}>
-                <GreenLines />
-                <AnimatedLineCoordinates
-                  coordinates={firstLineCoordinates}
-                  colors={["#000", "#00FF00", "#00FF00", "transparent"]}
-                  strokeWidth={9}
-                  duration={1200}
-                  colorPositions={[0, 0.3, 0.9, 1]}
-                />
-                <AnimatedLineCoordinates
-                  coordinates={secondLineCoordinates}
-                  colors={["#00FF00", "#ff0000ff", "#ff0000ff", "transparent"]}
-                  strokeWidth={9}
-                  duration={1200}
-                  colorPositions={[0, 0.6, 0.9, 1]}
-                />
-                <AnimatedDotsCoordinates
-                  coordinates={firstLineDots}
-                  dotColor="#00ff00df"
-                  dotRadius={13}
-                  hasOpacity={true}
-                />
-                <AnimatedDotsCoordinates
-                  coordinates={secondLineDots}
-                  dotColor="#3F4550"
-                  dotRadius={12}
-                />
-                <TrendLine />
-              </Canvas>
-              <Octicons
-                name="arrow-up"
-                size={37}
-                color="white"
-                style={styles.chartArrow}
+            <Canvas style={styles.canvas}>
+              <GreenLines />
+              <AnimatedLineCoordinates
+                coordinates={firstLineCoordinates}
+                colors={["#000", "#00FF00", "#00FF00", "transparent"]}
+                strokeWidth={9}
+                duration={1200}
+                colorPositions={[0, 0.3, 0.9, 1]}
               />
-            </LinearGradient>
+              <AnimatedLineCoordinates
+                coordinates={secondLineCoordinates}
+                colors={["#00FF00", "#ff0000ff", "#ff0000ff", "transparent"]}
+                strokeWidth={9}
+                duration={1200}
+                colorPositions={[0, 0.6, 0.9, 1]}
+              />
+              <AnimatedDotsCoordinates
+                coordinates={firstLineDots}
+                dotColor="#00ff00df"
+                dotRadius={13}
+                hasOpacity={true}
+              />
+              <AnimatedDotsCoordinates
+                coordinates={secondLineDots}
+                dotColor="#3F4550"
+                dotRadius={12}
+              />
+              <TrendLine />
+            </Canvas>
+            <Octicons
+              name="arrow-up"
+              size={37}
+              color="white"
+              style={styles.chartArrow}
+            />
           </View>
           <View style={styles.legendaContainer}>
             <View
@@ -198,18 +210,23 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     padding: 10,
   },
+  screenGradient: {
+    flex: 1,
+    backgroundColor: "transparent",
+    padding: 10,
+  },
   chartContainer: {
     marginTop: 40,
     width: "100%",
     height: 260,
-    backgroundColor: "#555",
+    backgroundColor: "transparent",
     borderRadius: 12,
     overflow: "hidden",
   },
   canvas: {
     flex: 1,
     width: "100%",
-    backgroundColor: "transparent",
+    backgroundColor: "ttransparent",
     zIndex: 2,
   },
   gradient: {
@@ -310,9 +327,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderColor: "#555",
     borderWidth: 0.2,
-    shadowColor: "#555",
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.32,
   },
   greenSquare: {
     backgroundColor: "#00FF00",
@@ -366,6 +380,14 @@ const styles = StyleSheet.create({
     margin: -10,
     borderRadius: 12,
     backgroundColor: "#000",
+  },
+  gradientContainer: {
+    position: "absolute",
+    right: 0,
+    top: 100,
+    height: 350,
+    width: "100%",
+    // zIndex: 1,
   },
 });
 
